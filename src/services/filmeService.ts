@@ -1,4 +1,3 @@
-// services/filmeService.ts
 import { api } from '@/types/api';
 import { Filme } from '@/types/Filme';
 
