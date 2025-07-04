@@ -4,8 +4,7 @@ import SessaoForm from "@/components/sessaoForm";
 
 export default function Home() {
   return (
-    <main>
-      <h1>Cadastro de Filmes</h1>
+    <main className="flex flex-col items-center justify-center min-h-screen gap-10">
       <FilmeForm />
       <SalaForm />
       <SessaoForm />

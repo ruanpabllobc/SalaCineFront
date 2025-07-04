@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const robotoMono = Roboto_Mono({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-roboto-mono",
 });
 
 export const metadata: Metadata = {
@@ -24,10 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable}`}
-    >
+    <html lang="pt-BR" className={`${robotoMono.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

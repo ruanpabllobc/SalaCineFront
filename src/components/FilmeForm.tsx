@@ -4,7 +4,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { createFilm } from "@/services/filmeService";
 import { toast } from "react-toastify";
+import FloatingLabelInput from "./FloatingLabelInput";
 import "react-toastify/dist/ReactToastify.css";
+import CustomButton from "./CustomButton";
+import { Plus, Ban } from "lucide-react";
 
 const generos = [
   "Ação",
@@ -27,6 +30,15 @@ const generos = [
   "Biografia",
   "Esporte",
   "Família",
+];
+
+const classificacoesEtarias = [
+  { value: 0, label: "Livre" },
+  { value: 10, label: "10 Anos" },
+  { value: 12, label: "12 Anos" },
+  { value: 14, label: "14 Anos" },
+  { value: 16, label: "16 Anos" },
+  { value: 18, label: "18 Anos" },
 ];
 
 const validationSchema = Yup.object().shape({
@@ -53,16 +65,21 @@ export default function FilmForm() {
     initialValues: {
       titulo: "",
       duracao: 0,
-      classificacao: 0,
+      classificacao: "",
       genero: "",
       diretor: "",
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const filmeCriado = await createFilm(values);
+        // Converte a classificação para número antes de enviar
+        const dataToSend = {
+          ...values,
+          classificacao: Number(values.classificacao),
+        };
+        const filmeCriado = await createFilm(dataToSend);
         toast.success(
-          `Filme "${filmeCriado.titulo}" cadastrado! ID: ${filmeCriado.id_filme}`,
+          `Filme "${filmeCriado.titulo}" cadastrado! ID: ${filmeCriado.id_filme}`
         );
         resetForm();
       } catch (error) {
@@ -73,89 +90,121 @@ export default function FilmForm() {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <div>
-        <label htmlFor="titulo">Título</label>
-        <input
-          id="titulo"
-          name="titulo"
-          type="text"
-          value={formik.values.titulo}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+    <form
+      onSubmit={formik.handleSubmit}
+      className="w-[750px] mx-auto px-5 pb-5 flex flex-col gap-10"
+      style={{ paddingTop: "0px" }}
+    >
+      {/* Linha 1: Grupo de Texto*/}
+      <div className="text-center">
+        <h2 className="text-2xl">Adicionar Filme</h2>
+        <h3 className="text-[#969696] text-lg">
+          Adicione um novo filme ao catálogo
+        </h3>
+      </div>
+
+      {/* Linha 2: Grupo de Inputs */}
+      <div className="flex flex-col gap-8">
+        <div>
+          <FloatingLabelInput
+            id="titulo"
+            name="titulo"
+            label="Título do Filme"
+            value={formik.values.titulo}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            touched={formik.touched.titulo}
+            error={formik.errors.titulo}
+          />
+        </div>
+        <div className="flex gap-5">
+          <div className="flex-1">
+            <FloatingLabelInput
+              id="diretor"
+              name="diretor"
+              label="Nome do Diretor"
+              type="text"
+              value={formik.values.diretor}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.diretor}
+              error={formik.errors.diretor}
+            />
+          </div>
+          <div className="flex-1">
+            <FloatingLabelInput
+              id="duracao"
+              name="duracao"
+              label="Duração (min)"
+              type="number"
+              value={formik.values.duracao}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.duracao}
+              error={formik.errors.duracao}
+              min={0}
+            />
+          </div>
+        </div>
+        <div className="flex gap-5">
+          <div className="flex-1">
+            <FloatingLabelInput
+              id="genero"
+              name="genero"
+              label="Gênero"
+              type="select"
+              value={formik.values.genero}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.genero}
+              error={formik.errors.genero}
+              options={[
+                { value: "", label: "Selecionar Gênero" },
+                ...generos.map((genero) => ({ value: genero, label: genero })),
+              ]}
+            />
+          </div>
+          <div className="flex-1">
+            <FloatingLabelInput
+              id="classificacao"
+              name="classificacao"
+              label="Selecionar Classificação"
+              type="select"
+              value={formik.values.classificacao}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.classificacao}
+              error={formik.errors.classificacao}
+              options={[
+                { value: "", label: "Selecione a classificação" },
+                ...classificacoesEtarias.map((item) => ({
+                  value: String(item.value),
+                  label: item.label,
+                })),
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Linha 3: Grupo de Botões */}
+      <div className="flex gap-5">
+        <CustomButton
+          type="button"
+          label="Cancelar Ação"
+          icon={<Ban size={18} />}
+          variant="danger"
+          className="flex-1"
+          onClick={() => formik.resetForm()}
         />
-        {formik.touched.titulo && formik.errors.titulo ? (
-          <div style={{ color: "red" }}>{formik.errors.titulo}</div>
-        ) : null}
-      </div>
-
-      <div>
-        <label htmlFor="duracao">Duração (min)</label>
-        <input
-          id="duracao"
-          name="duracao"
-          type="number"
-          value={formik.values.duracao}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+        <CustomButton
+          type="submit"
+          label="Criar Filme"
+          icon={<Plus size={18} />}
+          variant="default"
+          className="flex-1"
         />
-        {formik.touched.duracao && formik.errors.duracao ? (
-          <div style={{ color: "red" }}>{formik.errors.duracao}</div>
-        ) : null}
       </div>
-
-      <div>
-        <label htmlFor="classificacao">Classificação</label>
-        <input
-          id="classificacao"
-          name="classificacao"
-          type="number"
-          value={formik.values.classificacao}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        {formik.touched.classificacao && formik.errors.classificacao ? (
-          <div style={{ color: "red" }}>{formik.errors.classificacao}</div>
-        ) : null}
-      </div>
-
-      <div>
-        <label htmlFor="genero">Gênero</label>
-        <select
-          id="genero"
-          name="genero"
-          value={formik.values.genero}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        >
-          <option value="">Selecione um gênero</option>
-          {generos.map((genero) => (
-            <option key={genero} value={genero}>
-              {genero}
-            </option>
-          ))}
-        </select>
-        {formik.touched.genero && formik.errors.genero ? (
-          <div style={{ color: "red" }}>{formik.errors.genero}</div>
-        ) : null}
-      </div>
-
-      <div>
-        <label htmlFor="diretor">Diretor</label>
-        <input
-          id="diretor"
-          name="diretor"
-          type="text"
-          value={formik.values.diretor}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        {formik.touched.diretor && formik.errors.diretor ? (
-          <div style={{ color: "red" }}>{formik.errors.diretor}</div>
-        ) : null}
-      </div>
-
-      <button type="submit">Cadastrar</button>
     </form>
   );
 }

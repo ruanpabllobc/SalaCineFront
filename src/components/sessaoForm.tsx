@@ -5,6 +5,9 @@ import * as Yup from "yup";
 import { createSessao } from "@/services/sessaoService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import FloatingLabelInput from "./FloatingLabelInput";
+import CustomButton from "./CustomButton";
+import { Plus, Ban } from "lucide-react";
 
 const validationSchema = Yup.object().shape({
   filme: Yup.number()
@@ -24,8 +27,8 @@ export default function SessaoForm() {
   const formik = useFormik({
     initialValues: {
       data_hora: "",
-      filme: 0,
-      sala: 0,
+      filme: "",
+      sala: "",
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
@@ -33,11 +36,11 @@ export default function SessaoForm() {
         const dataHoraFormatada = values.data_hora + ":00";
         const sessaoCriada = await createSessao({
           data_hora: dataHoraFormatada,
-          id_filme: values.filme,
-          id_sala: values.sala,
+          id_filme: Number(values.filme),
+          id_sala: Number(values.sala),
         });
         toast.success(
-          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`,
+          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`
         );
         resetForm();
       } catch (error) {
@@ -48,54 +51,84 @@ export default function SessaoForm() {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <div>
-        <label htmlFor="filme">ID do Filme</label>
-        <input
-          id="filme"
-          name="filme"
-          type="number"
-          value={formik.values.filme}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        {formik.touched.filme && formik.errors.filme ? (
-          <div style={{ color: "red" }}>{formik.errors.filme}</div>
-        ) : null}
+    <form
+      onSubmit={formik.handleSubmit}
+      className="w-[750px] mx-auto px-5 pb-5 flex flex-col gap-10"
+      style={{ paddingTop: "0px" }}
+    >
+      {/* Linha 1: Grupo de Texto*/}
+      <div className="text-center">
+        <h2 className="text-2xl">Adicionar Sessão</h2>
+        <h3 className="text-[#969696] text-lg">
+          Escolha um filme e adicione uma nova sessão
+        </h3>
       </div>
 
-      <div>
-        <label htmlFor="sala">ID da Sala</label>
-        <input
-          id="sala"
-          name="sala"
-          type="number"
-          value={formik.values.sala}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-        />
-        {formik.touched.sala && formik.errors.sala ? (
-          <div style={{ color: "red" }}>{formik.errors.sala}</div>
-        ) : null}
+      {/* Linha 2: Grupo de Inputs */}
+      <div className="flex flex-col gap-8">
+        <div className="flex gap-5">
+          <div className="flex-1">
+            <FloatingLabelInput
+              id="filme"
+              name="filme"
+              label="ID do Filme"
+              type="number"
+              value={formik.values.filme}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.filme}
+              error={formik.errors.filme}
+              min={1}
+            />
+          </div>
+          <div className="flex-1">
+            <FloatingLabelInput
+              id="sala"
+              name="sala"
+              label="ID da Sala"
+              type="number"
+              value={formik.values.sala}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.sala}
+              error={formik.errors.sala}
+              min={1}
+            />
+          </div>
+        </div>
+        <div>
+          <FloatingLabelInput
+            id="data_hora"
+            name="data_hora"
+            label="Data e Hora"
+            type="datetime-local"
+            value={formik.values.data_hora}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            touched={formik.touched.data_hora}
+            error={formik.errors.data_hora}
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="data_hora">Data e Hora</label>
-        <input
-          id="data_hora"
-          name="data_hora"
-          type="datetime-local"
-          value={formik.values.data_hora}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          min={new Date().toISOString().slice(0, 16)} // Define o mínimo como o momento atual
+      {/* Linha 3: Grupo de Botões */}
+      <div className="flex gap-5">
+        <CustomButton
+          type="button"
+          label="Cancelar Ação"
+          icon={<Ban size={18} />}
+          variant="danger"
+          className="flex-1"
+          onClick={() => formik.resetForm()}
         />
-        {formik.touched.data_hora && formik.errors.data_hora ? (
-          <div style={{ color: "red" }}>{formik.errors.data_hora}</div>
-        ) : null}
+        <CustomButton
+          type="submit"
+          label="Criar Sessão"
+          icon={<Plus size={18} />}
+          variant="default"
+          className="flex-1"
+        />
       </div>
-
-      <button type="submit">Cadastrar Sessão</button>
     </form>
   );
 }
