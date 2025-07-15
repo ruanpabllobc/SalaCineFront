@@ -9,15 +9,6 @@ import FloatingLabelInput from "./FloatingLabelInput";
 import CustomButton from "./CustomButton";
 import { Plus, Ban } from "lucide-react";
 
-const classificacoesEtarias = [
-  { value: 0, label: "Livre" },
-  { value: 10, label: "10 Anos" },
-  { value: 12, label: "12 Anos" },
-  { value: 14, label: "14 Anos" },
-  { value: 16, label: "16 Anos" },
-  { value: 18, label: "18 Anos" },
-];
-
 const validationSchema = Yup.object().shape({
   numero_sala: Yup.number()
     .integer("O número da sala deve ser um inteiro")
@@ -26,11 +17,6 @@ const validationSchema = Yup.object().shape({
   local: Yup.string()
     .max(100, "A localização deve ter no máximo 100 caracteres")
     .required("A localização é obrigatória"),
-  classificacao: Yup.number()
-    .integer("A classificação deve ser um número inteiro")
-    .min(0, "A classificação mínima é 0")
-    .max(18, "A classificação máxima é 18")
-    .required("A classificação é obrigatória"),
 });
 
 export default function SalaForm() {
@@ -38,7 +24,6 @@ export default function SalaForm() {
     initialValues: {
       numero_sala: "",
       local: "",
-      classificacao: "",
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
@@ -46,7 +31,6 @@ export default function SalaForm() {
         const dataToSend = {
           ...values,
           numero_sala: Number(values.numero_sala),
-          classificacao: Number(values.classificacao),
         };
         const salaCriada = await createSala(dataToSend);
         toast.success(
@@ -89,26 +73,6 @@ export default function SalaForm() {
               touched={formik.touched.numero_sala}
               error={formik.errors.numero_sala}
               min={1}
-            />
-          </div>
-          <div className="flex-1">
-            <FloatingLabelInput
-              id="classificacao"
-              name="classificacao"
-              label="Classificação"
-              type="select"
-              value={formik.values.classificacao}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              touched={formik.touched.classificacao}
-              error={formik.errors.classificacao}
-              options={[
-                { value: "", label: "Selecione a classificação" },
-                ...classificacoesEtarias.map((item) => ({
-                  value: String(item.value),
-                  label: item.label,
-                })),
-              ]}
             />
           </div>
         </div>
