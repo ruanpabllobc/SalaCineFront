@@ -17,3 +17,23 @@ export const createFilm = async (dados: CriarFilmeDTO): Promise<Filme> => {
     throw error;
   }
 };
+
+export const getFilmes = async (): Promise<Filme[]> => {
+  try {
+    const response = await api.get<Filme[]>('/filmes');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar filmes:', error);
+    throw error;
+  }
+};
+
+export const getFilmeById = async (id: number): Promise<Filme> => {
+  try {
+    const response = await api.get<Filme>(`/filmes/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao buscar filme com ID ${id}:`, error);
+    throw error;
+  }
+};

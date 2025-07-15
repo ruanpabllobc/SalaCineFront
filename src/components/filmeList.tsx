@@ -1,19 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sala } from "@/types/Sala";
-import { getSalas } from "@/services/salaService";
+import { Filme } from "@/types/Filme";
+import { getFilmes } from "@/services/filmeService";
 import { Table } from "@/components/Table";
 
 export default function SalaList() {
-  const [salas, setSalas] = useState<Sala[]>([]);
+  const [filmes, setFilmes] = useState<Filme[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSalas = async () => {
       try {
-        const salasData = await getSalas();
-        setSalas(salasData);
+        const filmesData = await getFilmes();
+        setFilmes(filmesData);
       } catch (error) {
         console.error("Erro ao buscar salas:", error);
       } finally {
@@ -30,10 +30,17 @@ export default function SalaList() {
   return (
     <Table.Root>
       <Table.Body>
-        {salas.map((sala) => (
+        {filmes.map((filme) => (
           <Table.Row
-            key={sala.id_sala}
-            cellsContent={[sala.numero_sala, sala.local]}
+            key={filme.id_filme}
+            cellsContent={[
+              filme.classificacao,
+              filme.data_cadastro,
+              filme.diretor,
+              filme.duracao,
+              filme.genero,
+              filme.titulo,
+            ]}
           />
         ))}
       </Table.Body>
