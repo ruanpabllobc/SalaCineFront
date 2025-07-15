@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sala } from "@/types/Sala";
 import { getSalas } from "@/services/salaService";
+import { Table } from "@/components/Table";
 
 export default function SalaList() {
   const [salas, setSalas] = useState<Sala[]>([]);
@@ -11,7 +12,7 @@ export default function SalaList() {
   useEffect(() => {
     const fetchSalas = async () => {
       try {
-        const salasData = await getSalas(); // Usando o serviço importado
+        const salasData = await getSalas();
         setSalas(salasData);
       } catch (error) {
         console.error("Erro ao buscar salas:", error);
@@ -23,26 +24,19 @@ export default function SalaList() {
     fetchSalas();
   }, []);
 
-  if (loading) return <div>Carregando salas...</div>;
+  if (loading)
+    return <div className="p-4 text-center">Carregando salas...</div>;
 
   return (
-    <table className="min-w-full">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Número</th>
-          <th>Local</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table.Root>
+      <Table.Body>
         {salas.map((sala) => (
-          <tr key={sala.id_sala}>
-            <td>{sala.id_sala}</td>
-            <td>{sala.numero_sala}</td>
-            <td>{sala.local}</td>
-          </tr>
+          <Table.Row
+            key={sala.id_sala}
+            cellsContent={[sala.id_sala, sala.numero_sala, sala.local]}
+          />
         ))}
-      </tbody>
-    </table>
+      </Table.Body>
+    </Table.Root>
   );
 }
