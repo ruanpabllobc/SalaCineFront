@@ -17,3 +17,23 @@ export const createSala = async (dados: CriarSalaDTO): Promise<Sala> => {
     throw error;
   }
 };
+
+export const getSalas = async (): Promise<Sala[]> => {
+  try {
+    const response = await api.get<Sala[]>('/salas');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar salas:', error);
+    throw error;
+  }
+};
+
+export const getSalaById = async (id: number): Promise<Sala> => {
+  try {
+    const response = await api.get<Sala>(`/salas/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao buscar sala com ID ${id}:`, error);
+    throw error;
+  }
+};
