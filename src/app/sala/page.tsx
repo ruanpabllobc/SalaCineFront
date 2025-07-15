@@ -1,5 +1,5 @@
 import SalaForm from "@/components/SalaForm";
-import SalaList from "@/components/salaList";
+import SalaList from "@/components/SalaList";
 
 export default function SalaPage() {
   return (

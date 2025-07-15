@@ -1,6 +1,6 @@
 import FilmeForm from "@/components/FilmeForm";
 import SalaForm from "@/components/SalaForm";
-import SessaoForm from "@/components/sessaoForm";
+import SessaoForm from "@/components/SessaoForm";
 
 export default function Home() {
   return (

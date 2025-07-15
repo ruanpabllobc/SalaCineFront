@@ -1,4 +1,4 @@
-import SessaoForm from "@/components/sessaoForm";
+import SessaoForm from "@/components/SessaoForm";
 
 export default function SessaoPage() {
   return (
