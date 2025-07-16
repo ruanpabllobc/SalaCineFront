@@ -27,6 +27,9 @@ export default function SalaList() {
   if (loading)
     return <div className="p-4 text-center">Carregando salas...</div>;
 
+  if (filmes.length === 0)
+    return <div className="p-4 text-center">Nenhuma sessão encontrada.</div>;
+
   return (
     <Table.Root>
       <Table.Body>
