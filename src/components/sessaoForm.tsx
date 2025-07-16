@@ -31,13 +31,22 @@ export default function SessaoForm() {
       sala: "",
     },
     validationSchema,
+    // Em SessaoForm.tsx, dentro de onSubmit:
     onSubmit: async (values, { resetForm }) => {
       try {
-        const dataHoraFormatada = values.data_hora + ":00";
+        const selectedDateTime = new Date(values.data_hora);
+
+        if (isNaN(selectedDateTime.getTime())) {
+          toast.error("Data e hora selecionadas são inválidas.");
+          return;
+        }
+
+        const dataHoraFormatada = selectedDateTime.toISOString();
+
         const sessaoCriada = await createSessao({
           data_hora: dataHoraFormatada,
-          id_filme: Number(values.filme),
-          id_sala: Number(values.sala),
+          filme_id: Number(values.filme), // <-- Mude de id_filme para filme_id
+          sala_id: Number(values.sala), // <-- Mude de id_sala para sala_id
         });
         toast.success(
           `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`

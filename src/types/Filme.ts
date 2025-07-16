@@ -3,7 +3,8 @@ export interface Filme {
   titulo: string;
   duracao: number;
   classificacao: number;
-  genero: string;
+  genero: string[];
   diretor: string;
   data_cadastro?: string;
+  poster?: File | null;  
 }

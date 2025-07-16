@@ -8,6 +8,7 @@ import FloatingLabelInput from "./FloatingLabelInput";
 import "react-toastify/dist/ReactToastify.css";
 import CustomButton from "./CustomButton";
 import { Plus, Ban } from "lucide-react";
+import FloatingLabelFileInput from "./FloatingLabelFileInput";
 
 const generos = [
   "Ação",
@@ -58,6 +59,15 @@ const validationSchema = Yup.object().shape({
   diretor: Yup.string()
     .max(100, "O diretor deve ter no máximo 100 caracteres")
     .required("O diretor é obrigatório"),
+  poster: Yup.mixed<File>()
+    .test("fileSize", "A imagem é muito grande (máx. 2MB)", (file) => {
+      if (!file) return true;
+      return (file as File).size <= 2 * 1024 * 1024;
+    })
+    .test("fileType", "Formato não suportado (use JPEG ou PNG)", (file) => {
+      if (!file) return true;
+      return ["image/jpeg", "image/png"].includes((file as File).type);
+    }),
 });
 
 export default function FilmForm() {
@@ -68,19 +78,25 @@ export default function FilmForm() {
       classificacao: "",
       genero: "",
       diretor: "",
+      poster: null as File | null,
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        // Converte a classificação para número antes de enviar
-        const dataToSend = {
-          ...values,
-          classificacao: Number(values.classificacao),
-        };
-        const filmeCriado = await createFilm(dataToSend);
-        toast.success(
-          `Filme "${filmeCriado.titulo}" cadastrado! ID: ${filmeCriado.id_filme}`
-        );
+        const formData = new FormData();
+        formData.append("titulo", values.titulo);
+        formData.append("duracao", String(values.duracao));
+        formData.append("classificacao", values.classificacao);
+        formData.append("diretor", values.diretor);
+        // Converter genero (string) para generos (array)
+        formData.append("generos", JSON.stringify([values.genero]));
+
+        if (values.poster) {
+          formData.append("poster", values.poster);
+        }
+
+        const filmeCriado = await createFilm(formData);
+        toast.success(`Filme "${filmeCriado.titulo}" cadastrado!`);
         resetForm();
       } catch (error) {
         console.error("Erro:", error);
@@ -151,7 +167,7 @@ export default function FilmForm() {
             <FloatingLabelInput
               id="genero"
               name="genero"
-              label="Gênero"
+              label="Selecionar Gênero"
               type="select"
               value={formik.values.genero}
               onChange={formik.handleChange}
@@ -182,6 +198,25 @@ export default function FilmForm() {
                   label: item.label,
                 })),
               ]}
+            />
+          </div>
+        </div>
+        <div>
+          <div className="flex-1">
+            <FloatingLabelFileInput
+              id="poster"
+              name="poster"
+              label="Poster do Filme"
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0] ?? null;
+                formik.setFieldValue("poster", file);
+              }}
+              onBlur={formik.handleBlur}
+              touched={formik.touched.poster}
+              error={formik.errors.poster as string}
+              accept="image/jpeg, image/png"
+              fileName={formik.values.poster?.name || ""}
+              success={Boolean(formik.values.poster && !formik.errors.poster)}
             />
           </div>
         </div>
