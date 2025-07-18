@@ -63,13 +63,14 @@ const validationSchema = Yup.object().shape({
     .max(100, "O diretor deve ter no máximo 100 caracteres")
     .required("O diretor é obrigatório"),
   poster: Yup.mixed<File>()
+    .required("O poster é obrigatório") // Mensagem padronizada
     .test("fileSize", "A imagem é muito grande (máx. 2MB)", (file) => {
-      if (!file) return true;
-      return (file as File).size <= 2 * 1024 * 1024;
+      if (!file) return false; // Agora o campo é obrigatório
+      return file.size <= 2 * 1024 * 1024;
     })
     .test("fileType", "Formato não suportado (use JPEG ou PNG)", (file) => {
-      if (!file) return true;
-      return ["image/jpeg", "image/png"].includes((file as File).type);
+      if (!file) return false;
+      return ["image/jpeg", "image/png"].includes(file.type);
     }),
 });
 
