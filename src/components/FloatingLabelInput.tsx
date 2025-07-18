@@ -7,7 +7,7 @@ interface FloatingLabelInputProps {
   label: string;
   value: string | number;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => void;
   touched?: boolean;

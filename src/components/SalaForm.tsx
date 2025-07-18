@@ -34,7 +34,7 @@ export default function SalaForm() {
         };
         const salaCriada = await createSala(dataToSend);
         toast.success(
-          `Sala ${salaCriada.numero_sala} cadastrada! ID: ${salaCriada.id_sala}`
+          `Sala ${salaCriada.numero_sala} cadastrada! ID: ${salaCriada.id_sala}`,
         );
         resetForm();
       } catch (error) {

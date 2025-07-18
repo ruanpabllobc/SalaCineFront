@@ -6,5 +6,5 @@ export interface Filme {
   genero: string[];
   diretor: string;
   data_cadastro?: string;
-  poster?: File | null;  
+  poster?: File | null;
 }

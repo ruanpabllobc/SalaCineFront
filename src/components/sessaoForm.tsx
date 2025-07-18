@@ -49,7 +49,7 @@ export default function SessaoForm() {
           sala_id: Number(values.sala), // <-- Mude de id_sala para sala_id
         });
         toast.success(
-          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`
+          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`,
         );
         resetForm();
       } catch (error) {

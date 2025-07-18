@@ -1,11 +1,11 @@
-import { api } from '@/types/api';
-import { Filme } from '@/types/Filme';
+import { api } from "@/types/api";
+import { Filme } from "@/types/Filme";
 
 export const createFilm = async (formData: FormData): Promise<Filme> => {
   try {
-    const response = await api.post('/filmes', formData, {
+    const response = await api.post("/filmes", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data.filme;
@@ -16,10 +16,10 @@ export const createFilm = async (formData: FormData): Promise<Filme> => {
 
 export const getFilmes = async (): Promise<Filme[]> => {
   try {
-    const response = await api.get<Filme[]>('/filmes');
+    const response = await api.get<Filme[]>("/filmes");
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar filmes:', error);
+    console.error("Erro ao buscar filmes:", error);
     throw error;
   }
 };

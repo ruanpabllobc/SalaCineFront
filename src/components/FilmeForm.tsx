@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CustomButton from "./CustomButton";
 import { Plus, Ban } from "lucide-react";
 import FloatingLabelFileInput from "./FloatingLabelFileInput";
+import MultiSelect from "./MultiSelect";
 
 const generos = [
   "Ação",
@@ -55,7 +56,9 @@ const validationSchema = Yup.object().shape({
     .min(0, "A classificação mínima é 0")
     .max(18, "A classificação máxima é 18")
     .required("A classificação é obrigatória"),
-  genero: Yup.string().required("O gênero é obrigatório"),
+  generos: Yup.array()
+    .min(1, "Selecione pelo menos 1 gênero")
+    .required("O gênero é obrigatório"),
   diretor: Yup.string()
     .max(100, "O diretor deve ter no máximo 100 caracteres")
     .required("O diretor é obrigatório"),
@@ -76,7 +79,7 @@ export default function FilmForm() {
       titulo: "",
       duracao: 0,
       classificacao: "",
-      genero: "",
+      generos: [],
       diretor: "",
       poster: null as File | null,
     },
@@ -89,7 +92,7 @@ export default function FilmForm() {
         formData.append("classificacao", values.classificacao);
         formData.append("diretor", values.diretor);
         // Converter genero (string) para generos (array)
-        formData.append("generos", JSON.stringify([values.genero]));
+        formData.append("generos", JSON.stringify([values.generos]));
 
         if (values.poster) {
           formData.append("poster", values.poster);
@@ -162,22 +165,36 @@ export default function FilmForm() {
             />
           </div>
         </div>
-        <div className="flex gap-5">
+        {/* Linha 3: Grupo de Botões
           <div className="flex-1">
-            <FloatingLabelInput
-              id="genero"
-              name="genero"
-              label="Selecionar Gênero"
-              type="select"
-              value={formik.values.genero}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              touched={formik.touched.genero}
-              error={formik.errors.genero}
-              options={[
-                { value: "", label: "Selecionar Gênero" },
-                ...generos.map((genero) => ({ value: genero, label: genero })),
-              ]}
+          <FloatingLabelInput
+          id="genero"
+          name="genero"
+          label="Selecionar Gênero"
+          type="select"
+          value={formik.values.genero}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          touched={formik.touched.genero}
+          error={formik.errors.genero}
+          options={[
+            { value: "", label: "Selecionar Gênero" },
+            ...generos.map((genero) => ({ value: genero, label: genero })),
+            ]}
+            />
+            </div>
+            */}
+
+        <div className="flex gap-5">
+          <div className="flex-1 max-w-[350px]">
+            <MultiSelect
+              id="generos"
+              name="generos"
+              label="Selecione os gêneros"
+              value={formik.values.generos}
+              onChange={(selected) => formik.setFieldValue("generos", selected)}
+              onBlur={() => formik.setFieldTouched("generos", true)}
+              options={generos}
             />
           </div>
           <div className="flex-1">
@@ -201,6 +218,7 @@ export default function FilmForm() {
             />
           </div>
         </div>
+
         <div>
           <div className="flex-1">
             <FloatingLabelFileInput
