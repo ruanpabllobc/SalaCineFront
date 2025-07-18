@@ -8,22 +8,49 @@ import "react-toastify/dist/ReactToastify.css";
 import FloatingLabelInput from "./FloatingLabelInput";
 import CustomButton from "./CustomButton";
 import { Plus, Ban } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Filme } from "@/types/Filme";
+import { Sala } from "@/types/Sala";
+import { getFilmes } from "@/services/filmeService";
+import { getSalas } from "@/services/salaService";
 
 const validationSchema = Yup.object().shape({
   filme: Yup.number()
-    .integer("O ID do filme deve ser um número inteiro")
-    .min(1, "O ID do filme deve ser pelo menos 1")
-    .required("O ID do filme é obrigatório"),
+    .min(1, "Selecione um filme")
+    .required("Selecione um filme"),
   sala: Yup.number()
-    .integer("O ID da sala deve ser um número inteiro")
-    .min(1, "O ID da sala deve ser pelo menos 1")
-    .required("O ID da sala é obrigatório"),
+    .min(1, "Selecione uma sala")
+    .required("Selecione uma sala"),
   data_hora: Yup.date()
     .required("A data e hora são obrigatórias")
     .min(new Date(), "A data e hora devem ser no futuro"),
 });
 
 export default function SessaoForm() {
+  const [filmes, setFilmes] = useState<Filme[]>([]);
+  const [salas, setSalas] = useState<Sala[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [filmesData, salasData] = await Promise.all([
+          getFilmes(),
+          getSalas(),
+        ]);
+        setFilmes(filmesData);
+        setSalas(salasData);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        toast.error("Falha ao carregar filmes e salas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       data_hora: "",
@@ -31,7 +58,6 @@ export default function SessaoForm() {
       sala: "",
     },
     validationSchema,
-    // Em SessaoForm.tsx, dentro de onSubmit:
     onSubmit: async (values, { resetForm }) => {
       try {
         const selectedDateTime = new Date(values.data_hora);
@@ -45,11 +71,11 @@ export default function SessaoForm() {
 
         const sessaoCriada = await createSessao({
           data_hora: dataHoraFormatada,
-          filme_id: Number(values.filme), // <-- Mude de id_filme para filme_id
-          sala_id: Number(values.sala), // <-- Mude de id_sala para sala_id
+          filme_id: Number(values.filme),
+          sala_id: Number(values.sala),
         });
         toast.success(
-          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`,
+          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`
         );
         resetForm();
       } catch (error) {
@@ -58,6 +84,10 @@ export default function SessaoForm() {
       }
     },
   });
+
+  if (loading) {
+    return <div className="p-4 text-center">Carregando filmes e salas...</div>;
+  }
 
   return (
     <form
@@ -80,28 +110,36 @@ export default function SessaoForm() {
             <FloatingLabelInput
               id="filme"
               name="filme"
-              label="ID do Filme"
-              type="number"
+              label="Filme"
+              type="select"
               value={formik.values.filme}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               touched={formik.touched.filme}
               error={formik.errors.filme}
-              min={1}
+              options={filmes.map((filme) => ({
+                value:
+                  filme.id_filme !== undefined ? filme.id_filme.toString() : "",
+                label: `${filme.titulo}`,
+              }))}
             />
           </div>
           <div className="flex-1">
             <FloatingLabelInput
               id="sala"
               name="sala"
-              label="ID da Sala"
-              type="number"
+              label="Sala"
+              type="select"
               value={formik.values.sala}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               touched={formik.touched.sala}
               error={formik.errors.sala}
-              min={1}
+              options={salas.map((sala) => ({
+                value:
+                  sala.id_sala !== undefined ? sala.id_sala.toString() : "",
+                label: `Sala ${sala.numero_sala} - ${sala.local}`,
+              }))}
             />
           </div>
         </div>

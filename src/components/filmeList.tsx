@@ -13,7 +13,6 @@ export default function SalaList() {
     const fetchSalas = async () => {
       try {
         const filmesData = await getFilmes();
-        console.log("Dados recebidos:", filmesData);
         setFilmes(filmesData);
       } catch (error) {
         console.error("Erro ao buscar salas:", error);
