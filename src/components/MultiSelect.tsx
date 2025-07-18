@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useRef, useEffect } from "react";
 import { X, ChevronDown } from "lucide-react";
+import {
+  commonClasses,
+  labelClasses,
+  errorClasses,
+  successClasses,
+} from "./InputStyles";
 
 interface MultiSelectProps {
   id: string;
@@ -13,6 +19,11 @@ interface MultiSelectProps {
   touched?: boolean;
   error?: string;
   className?: string;
+  success?: boolean;
+}
+
+interface BlurEvent {
+  currentTarget: HTMLDivElement;
 }
 
 const MultiSelect: React.FC<MultiSelectProps> = ({
@@ -26,14 +37,23 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   touched,
   error,
   className = "",
+  success,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const commonClasses =
-    "peer bg-transparent h-11 w-full text-[#181818] placeholder-[#B4B4B4] ring-1 px-5 ring-[#181818] focus:ring-[#181818] focus:outline-none focus:border-rose-600";
-  const labelClasses =
-    "absolute cursor-text left-5 -top-3 text-sm text-[#181818] bg-white px-3 z-10 peer-placeholder-shown:text-base peer-placeholder-shown:text-[#B4B4B4] peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-[#181818] peer-focus:text-sm transition-all";
+  // Ajusta a cor do anel com base no estado (erro, sucesso, ou padrão)
+  let ringColorClass = "ring-[#181818] focus:ring-[#181818]";
+  if (touched && error) {
+    ringColorClass = "ring-red-500 focus:ring-red-500";
+  } else if (success) {
+    ringColorClass = "ring-green-500 focus:ring-green-500";
+  }
+
+  const combinedClasses = `${commonClasses} ${ringColorClass} cursor-pointer flex items-center py-2 pr-8 ${
+    value.length === 0 ? "placeholder-shown" : ""
+  }`;
 
   const toggleOption = (option: string) => {
     const newValue = value.includes(option)
@@ -48,6 +68,13 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
       !wrapperRef.current.contains(event.target as Node)
     ) {
       setIsOpen(false);
+      if (hasFocus) {
+        const fakeEvent = {
+          currentTarget: wrapperRef.current,
+        } as BlurEvent;
+        onBlur(fakeEvent);
+        setHasFocus(false);
+      }
     }
   };
 
@@ -56,23 +83,30 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasFocus]);
+
+  const handleFocus = () => {
+    setHasFocus(true);
+  };
 
   return (
     <div className={`bg-white ${className}`}>
       <div className="relative bg-inherit">
         <div ref={wrapperRef} className="relative">
-          {/* Input que mostra os itens selecionados */}
           <div
             id={id}
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+              handleFocus();
+            }}
             onBlur={onBlur}
             tabIndex={0}
-            className={`${commonClasses} cursor-pointer flex items-center py-2 pr-8 ${value.length === 0 ? "placeholder-shown" : ""}`}
+            className={combinedClasses}
             style={{
               maxHeight: "44px",
-              overflow: "hidden", // Oculta o conteúdo que ultrapassar
-              whiteSpace: "nowrap", // Impede quebra de linha
+              overflow: "hidden",
+              whiteSpace: "nowrap",
             }}
           >
             {value.length === 0 ? (
@@ -101,17 +135,14 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             )}
           </div>
 
-          {/* Chevron Down icon */}
           <div className="absolute inset-y-0 right-3 pointer-events-none flex items-center text-gray-700">
             <ChevronDown size={24} />
           </div>
 
-          {/* Label flutuante */}
           <label htmlFor={id} className={labelClasses}>
             {label}
           </label>
 
-          {/* Dropdown com opções */}
           {isOpen && (
             <div className="absolute z-20 mt-1 w-full bg-white border border-[#181818] rounded shadow-lg max-h-60 overflow-auto">
               {options.map((option) => (
@@ -133,7 +164,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           )}
         </div>
         {touched && error && (
-          <div className="mt-1 text-sm text-red-500">{error}</div>
+          <div className={`${errorClasses} mt-1`}>{error}</div>
+        )}
+        {success && !error && (
+          <div className={successClasses}>Seleção realizada com sucesso!</div>
         )}
       </div>
     </div>

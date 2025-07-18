@@ -195,6 +195,12 @@ export default function FilmForm() {
               onChange={(selected) => formik.setFieldValue("generos", selected)}
               onBlur={() => formik.setFieldTouched("generos", true)}
               options={generos}
+              touched={!!formik.touched.generos}
+              error={
+                typeof formik.errors.generos === "string"
+                  ? formik.errors.generos
+                  : undefined
+              }
             />
           </div>
           <div className="flex-1">
