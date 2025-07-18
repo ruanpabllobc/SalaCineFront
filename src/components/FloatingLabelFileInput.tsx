@@ -4,7 +4,7 @@ import {
   labelClasses,
   errorClasses,
   successClasses,
-} from "./InputStyles";
+} from "./styles/InputStyles";
 
 interface FloatingLabelFileInputProps {
   id: string;

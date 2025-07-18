@@ -6,7 +6,7 @@ import {
   errorClasses,
   selectClasses,
   successClasses,
-} from "./InputStyles";
+} from "./styles/InputStyles";
 
 interface FloatingLabelInputProps {
   id: string;

@@ -32,6 +32,14 @@ export default function SalaList() {
 
   return (
     <Table.Root>
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Título</Table.HeaderCell>
+          <Table.HeaderCell>Diretor</Table.HeaderCell>
+          <Table.HeaderCell>Classificação</Table.HeaderCell>
+          <Table.HeaderCell>Duração</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
       <Table.Body>
         {filmes.map((filme) => (
           <Table.Row

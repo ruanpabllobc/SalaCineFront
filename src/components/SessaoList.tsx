@@ -32,6 +32,13 @@ export default function SessaoList() {
 
   return (
     <Table.Root>
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Filme</Table.HeaderCell>
+          <Table.HeaderCell>Sala</Table.HeaderCell>
+          <Table.HeaderCell>Horário</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
       <Table.Body>
         {sessoes.map((sessao) => (
           <Table.Row

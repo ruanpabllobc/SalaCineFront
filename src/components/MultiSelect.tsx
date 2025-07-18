@@ -6,7 +6,7 @@ import {
   labelClasses,
   errorClasses,
   successClasses,
-} from "./InputStyles";
+} from "./styles/InputStyles";
 
 interface MultiSelectProps {
   id: string;

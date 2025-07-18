@@ -32,6 +32,12 @@ export default function SalaList() {
 
   return (
     <Table.Root>
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Número</Table.HeaderCell>
+          <Table.HeaderCell>Local</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
       <Table.Body>
         {salas.map((sala) => (
           <Table.Row

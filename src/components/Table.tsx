@@ -18,6 +18,12 @@ type CellProps = {
   textColor?: "light" | "dark";
 };
 
+type HeaderCellProps = {
+  children?: ReactNode;
+  className?: string;
+  colSpan?: number;
+};
+
 const Root = ({ children, className = "" }: TableProps) => (
   <div className={`flex justify-center w-full ${className}`}>
     <div className="bg-white shadow-[0_-4px_10px_0_rgba(250,244,250,1)] max-w-[750px] w-full overflow-hidden border-b-2 border-black pt-[40px] pr-[20px] pb-[40px] pl-[20px]">
@@ -51,6 +57,25 @@ const Cell = ({
   );
 };
 
+const HeaderCell = ({ children, className = "", colSpan }: HeaderCellProps) => {
+  return (
+    <th
+      className={`
+        bg-[#EBEBEB]
+        p-[16px]
+        text-center 
+        align-middle
+        font-normal
+        text-[#181818]
+        ${className}
+      `}
+      colSpan={colSpan}
+    >
+      {children}
+    </th>
+  );
+};
+
 const Row = ({ children, className = "", cellsContent }: RowProps) => {
   if (cellsContent) {
     return (
@@ -67,13 +92,19 @@ const Row = ({ children, className = "", cellsContent }: RowProps) => {
   return <tr className={className}>{children}</tr>;
 };
 
+const Head = ({ children, className = "" }: TableProps) => (
+  <thead className={className}>{children}</thead>
+);
+
 const Body = ({ children, className = "" }: TableProps) => (
   <tbody className={className}>{children}</tbody>
 );
 
 export const Table = {
   Root,
+  Head,
   Body,
   Row,
   Cell,
+  HeaderCell,
 };
