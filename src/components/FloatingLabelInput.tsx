@@ -45,7 +45,6 @@ const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   step,
   success,
 }) => {
-  // Ajusta a cor do anel com base no estado (erro, sucesso, ou padrão)
   let ringColorClass = "ring-[#181818] focus:ring-[#181818]";
   if (touched && error) {
     ringColorClass = "ring-red-500 focus:ring-red-500";
@@ -80,9 +79,11 @@ const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
             <div className="absolute inset-y-0 right-3 pointer-events-none flex items-center text-gray-700">
               <ChevronDown size={24} />
             </div>
-            <label htmlFor={id} className={labelClasses}>
-              {label}
-            </label>
+            {value && (
+              <label htmlFor={id} className={labelClasses}>
+                {label}
+              </label>
+            )}
           </div>
         ) : (
           <>

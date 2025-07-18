@@ -69,10 +69,9 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     ) {
       setIsOpen(false);
       if (hasFocus) {
-        const fakeEvent = {
-          currentTarget: wrapperRef.current,
-        } as BlurEvent;
-        onBlur(fakeEvent);
+        if (wrapperRef.current) {
+          wrapperRef.current.blur();
+        }
         setHasFocus(false);
       }
     }
@@ -110,7 +109,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             }}
           >
             {value.length === 0 ? (
-              <span className="text-[#B4B4B4]">{label}</span>
+              <span className="text-[#181818]">{label}</span>
             ) : (
               <div className="flex items-center gap-2 overflow-hidden w-full">
                 {value.map((item) => (
@@ -139,9 +138,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
             <ChevronDown size={24} />
           </div>
 
-          <label htmlFor={id} className={labelClasses}>
-            {label}
-          </label>
+          {value.length > 0 && (
+            <label htmlFor={id} className={labelClasses}>
+              {label}
+            </label>
+          )}
 
           {isOpen && (
             <div className="absolute z-20 mt-1 w-full bg-white border border-[#181818] rounded shadow-lg max-h-60 overflow-auto">

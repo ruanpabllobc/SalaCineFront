@@ -13,6 +13,7 @@ export default function SalaList() {
     const fetchSalas = async () => {
       try {
         const filmesData = await getFilmes();
+        console.log("Dados recebidos:", filmesData);
         setFilmes(filmesData);
       } catch (error) {
         console.error("Erro ao buscar salas:", error);
@@ -25,10 +26,10 @@ export default function SalaList() {
   }, []);
 
   if (loading)
-    return <div className="p-4 text-center">Carregando salas...</div>;
+    return <div className="p-4 text-center">Carregando filmes...</div>;
 
   if (filmes.length === 0)
-    return <div className="p-4 text-center">Nenhuma sessão encontrada.</div>;
+    return <div className="p-4 text-center">Nenhum filme encontrado.</div>;
 
   return (
     <Table.Root>
@@ -37,12 +38,10 @@ export default function SalaList() {
           <Table.Row
             key={filme.id_filme}
             cellsContent={[
-              filme.classificacao,
-              filme.data_cadastro,
-              filme.diretor,
-              filme.duracao,
-              filme.genero,
               filme.titulo,
+              filme.diretor,
+              filme.classificacao,
+              filme.duracao,
             ]}
           />
         ))}
