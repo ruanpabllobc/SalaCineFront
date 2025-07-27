@@ -2,7 +2,7 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { createFilm } from "@/services/filmeService";
+import { createFilm, updateFilme } from "@/services/filmeService";
 import { toast } from "react-toastify";
 import FloatingLabelInput from "./FloatingLabelInput";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,6 +10,8 @@ import CustomButton from "./CustomButton";
 import { Plus, Ban } from "lucide-react";
 import FloatingLabelFileInput from "./FloatingLabelFileInput";
 import MultiSelect from "./MultiSelect";
+import { Filme } from "@/types/Filme";
+import { useEffect } from "react";
 
 const generos = [
   "Ação",
@@ -34,6 +36,12 @@ const generos = [
   "Família",
 ];
 
+interface FilmeFormProps {
+  readonly filmeParaEditar?: Filme;
+  readonly onSuccess?: () => void;
+  readonly onCancel?: () => void;
+}
+
 const classificacoesEtarias = [
   { value: 0, label: "Livre" },
   { value: 10, label: "10 Anos" },
@@ -56,7 +64,7 @@ const validationSchema = Yup.object().shape({
     .min(0, "A classificação mínima é 0")
     .max(18, "A classificação máxima é 18")
     .required("A classificação é obrigatória"),
-  generos: Yup.array()
+  genero: Yup.array()
     .min(1, "Selecione pelo menos 1 gênero")
     .required("O gênero é obrigatório"),
   diretor: Yup.string()
@@ -74,40 +82,81 @@ const validationSchema = Yup.object().shape({
     }),
 });
 
-export default function FilmForm() {
+export default function FilmForm({
+  filmeParaEditar,
+  onSuccess,
+  onCancel,
+}: FilmeFormProps) {
+  const isEditMode = Boolean(filmeParaEditar);
+
   const formik = useFormik({
     initialValues: {
-      titulo: "",
-      duracao: 0,
-      classificacao: "",
-      generos: [],
-      diretor: "",
+      titulo: filmeParaEditar?.titulo || "",
+      duracao: filmeParaEditar?.duracao || 0,
+      classificacao: filmeParaEditar?.classificacao.toString() || "",
+      genero: filmeParaEditar?.genero || [],
+      diretor: filmeParaEditar?.diretor || "",
       poster: null as File | null,
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const formData = new FormData();
-        formData.append("titulo", values.titulo);
-        formData.append("duracao", String(values.duracao));
-        formData.append("classificacao", values.classificacao);
-        formData.append("diretor", values.diretor);
-        // Converter genero (string) para generos (array)
-        formData.append("generos", JSON.stringify([values.generos]));
+        if (isEditMode && filmeParaEditar?.id_filme) {
+          // Para edição - envia como JSON
+          const payload = {
+            titulo: values.titulo,
+            duracao: Number(values.duracao),
+            classificacao: Number(values.classificacao),
+            diretor: values.diretor,
+            generos: values.genero, // Note o plural aqui para bater com o backend
+          };
 
-        if (values.poster) {
-          formData.append("poster", values.poster);
+          console.log("Enviando para atualização:", payload);
+
+          const filmeAtualizado = await updateFilme(
+            filmeParaEditar.id_filme,
+            payload
+          );
+          toast.success(`Filme "${filmeAtualizado.titulo}" atualizado!`);
+        } else {
+          // Para criação - mantém FormData (para o poster)
+          const formData = new FormData();
+          formData.append("titulo", values.titulo);
+          formData.append("duracao", String(values.duracao));
+          formData.append("classificacao", values.classificacao);
+          formData.append("diretor", values.diretor);
+          formData.append("generos", JSON.stringify(values.genero));
+          if (values.poster) formData.append("poster", values.poster);
+
+          const filmeCriado = await createFilm(formData);
+          toast.success(`Filme "${filmeCriado.titulo}" cadastrado!`);
         }
 
-        const filmeCriado = await createFilm(formData);
-        toast.success(`Filme "${filmeCriado.titulo}" cadastrado!`);
         resetForm();
+        onSuccess?.();
       } catch (error) {
-        console.error("Erro:", error);
-        toast.error("Falha ao cadastrar filme");
+        console.error("Erro completo:", error);
+        toast.error(
+          isEditMode ? "Falha ao atualizar filme" : "Falha ao cadastrar filme"
+        );
       }
     },
   });
+
+  useEffect(() => {
+    if (filmeParaEditar) {
+      formik.setValues({
+        titulo: filmeParaEditar.titulo,
+        duracao: filmeParaEditar.duracao,
+        classificacao: filmeParaEditar.classificacao.toString(),
+        genero: filmeParaEditar.genero || [], // Corrigido para plural
+        diretor: filmeParaEditar.diretor,
+        poster: null, // Mantemos null para o poster, o usuário pode substituir
+      });
+    } else {
+      formik.resetForm();
+    }
+  }, [filmeParaEditar]);
 
   return (
     <form
@@ -117,7 +166,9 @@ export default function FilmForm() {
     >
       {/* Linha 1: Grupo de Texto*/}
       <div className="text-center">
-        <h2 className="text-2xl">Adicionar Filme</h2>
+        <h2 className="text-2xl">
+          {isEditMode ? "Editar Filme" : "Adicionar Filme"}
+        </h2>
         <h3 className="text-[#969696] text-lg">
           Adicione um novo filme ao catálogo
         </h3>
@@ -189,17 +240,17 @@ export default function FilmForm() {
         <div className="flex gap-5">
           <div className="flex-1 max-w-[350px]">
             <MultiSelect
-              id="generos"
-              name="generos"
+              id="genero"
+              name="genero"
               label="Selecione os gêneros"
-              value={formik.values.generos}
-              onChange={(selected) => formik.setFieldValue("generos", selected)}
-              onBlur={() => formik.setFieldTouched("generos", true)}
+              value={formik.values.genero}
+              onChange={(selected) => formik.setFieldValue("genero", selected)}
+              onBlur={() => formik.setFieldTouched("genero", true)}
               options={generos}
-              touched={!!formik.touched.generos}
+              touched={!!formik.touched.genero}
               error={
-                typeof formik.errors.generos === "string"
-                  ? formik.errors.generos
+                typeof formik.errors.genero === "string"
+                  ? formik.errors.genero
                   : undefined
               }
             />
@@ -255,11 +306,14 @@ export default function FilmForm() {
           icon={<Ban size={18} />}
           variant="danger"
           className="flex-1"
-          onClick={() => formik.resetForm()}
+          onClick={() => {
+            formik.resetForm();
+            onCancel?.();
+          }}
         />
         <CustomButton
           type="submit"
-          label="Criar Filme"
+          label={isEditMode ? "Atualizar Filme" : "Criar Filme"}
           icon={<Plus size={18} />}
           variant="default"
           className="flex-1"

@@ -30,7 +30,6 @@ export const getFilmeById = async (id: number): Promise<Filme> => {
   }
 };
 
-// services/filmeService.ts
 export async function deleteFilme(id: string): Promise<void> {
   console.log(`Enviando requisição DELETE para /filmes/${id}`);
   
@@ -46,3 +45,12 @@ export async function deleteFilme(id: string): Promise<void> {
     throw new Error('Falha ao deletar filme');
   }
 }
+
+export const updateFilme = async (id: number, formData: FormData): Promise<Filme> => {
+  const response = await api.put(`/filmes/${id}`, formData, {
+    headers: {
+      "Content-Type": "application/json", 
+    },
+  });
+  return response.data.filme;
+};
