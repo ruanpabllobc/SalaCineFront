@@ -41,8 +41,6 @@ export default function SessaoForm() {
         setSalas(salasData);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-      } finally {
-        toast.success("Dados carregados com sucesso!");
       }
     };
 

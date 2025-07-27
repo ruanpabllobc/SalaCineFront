@@ -9,26 +9,24 @@ type CriarSessaoDTO = {
 
 interface ApiResponse {
   message: string;
-  data: SessaoOutput[]; // Note que aqui usamos "sessoes" para manter consistência
+  data: SessaoOutput[];
 }
 
 export const createSessao = async (dados: CriarSessaoDTO): Promise<Sessao> => {
   try {
     const response = await api.post<{
       message: string;
-      sessao?: Sessao;    // Sem acento
-      sessão?: Sessao;    // Com acento
+      sessao?: Sessao;   
+      sessão?: Sessao;  
       id_sessao?: number;
     }>("/sessoes", dados);
 
-    // Verifica ambos os possíveis nomes do campo
     const sessaoCriada = response.data.sessao || response.data.sessão;
 
     if (sessaoCriada) {
       return sessaoCriada;
     }
 
-    // Se a mensagem for de sucesso, não lança erro
     if (response.data.message?.includes("sucesso")) {
       return { ...dados, id_sessao: response.data.id_sessao, filme: 0, sala: 0 };
     }
@@ -43,8 +41,7 @@ export const createSessao = async (dados: CriarSessaoDTO): Promise<Sessao> => {
 export const getSessoes = async (): Promise<SessaoOutput[]> => {
   try {
     const response = await api.get<ApiResponse>("/sessoes");
-    console.log("Dados recebidos:", response.data); // Para debug
-    return response.data.data || []; // Acessa a propriedade "data"
+    return response.data.data || [];
   } catch (error) {
     console.error("Erro ao buscar sessões:", error);
     return [];
