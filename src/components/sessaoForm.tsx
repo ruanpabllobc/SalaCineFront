@@ -29,7 +29,6 @@ const validationSchema = Yup.object().shape({
 export default function SessaoForm() {
   const [filmes, setFilmes] = useState<Filme[]>([]);
   const [salas, setSalas] = useState<Sala[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,13 +43,12 @@ export default function SessaoForm() {
         console.error("Erro ao buscar dados:", error);
         toast.error("Falha ao carregar filmes e salas");
       } finally {
-        setLoading(false);
+        toast.success("Dados carregados com sucesso!");
       }
     };
 
     fetchData();
   }, []);
-
   const formik = useFormik({
     initialValues: {
       data_hora: "",
@@ -84,10 +82,6 @@ export default function SessaoForm() {
       }
     },
   });
-
-  if (loading) {
-    return <div className="p-4 text-center">Carregando filmes e salas...</div>;
-  }
 
   return (
     <form

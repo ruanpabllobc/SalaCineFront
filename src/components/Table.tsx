@@ -80,11 +80,25 @@ const Row = ({ children, className = "", cellsContent }: RowProps) => {
   if (cellsContent) {
     return (
       <tr className={className}>
-        {cellsContent.map((content, index) => (
-          <Cell key={index} textColor={index % 2 === 0 ? "light" : "dark"}>
-            {content}
-          </Cell>
-        ))}
+        {cellsContent.map((content, index) => {
+          // Try to use a unique key from content, fallback to index if not possible
+          let key: React.Key = index;
+          if (typeof content === "string" || typeof content === "number") {
+            key = content;
+          } else if (
+            content &&
+            typeof content === "object" &&
+            "key" in content &&
+            content.key !== undefined
+          ) {
+            key = content.key as React.Key;
+          }
+          return (
+            <Cell key={key} textColor={index % 2 === 0 ? "light" : "dark"}>
+              {content}
+            </Cell>
+          );
+        })}
       </tr>
     );
   }

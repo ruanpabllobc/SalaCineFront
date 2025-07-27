@@ -2,16 +2,12 @@ import { api } from "@/types/api";
 import { Filme } from "@/types/Filme";
 
 export const createFilm = async (formData: FormData): Promise<Filme> => {
-  try {
-    const response = await api.post("/filmes", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data.filme;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post("/filmes", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data.filme;
 };
 
 export const getFilmes = async (): Promise<Filme[]> => {
@@ -33,3 +29,20 @@ export const getFilmeById = async (id: number): Promise<Filme> => {
     throw error;
   }
 };
+
+// services/filmeService.ts
+export async function deleteFilme(id: string): Promise<void> {
+  console.log(`Enviando requisição DELETE para /filmes/${id}`);
+  
+  const response = await api.delete<Filme>(`filmes/${id}`, {
+    method: 'DELETE',
+  });
+
+  console.log('Resposta da API:', response);
+  
+  if (response.status < 200 || response.status >= 300) {
+    const errorData = response.data || {};
+    console.error('Erro ao deletar:', errorData);
+    throw new Error('Falha ao deletar filme');
+  }
+}
