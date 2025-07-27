@@ -27,9 +27,6 @@ export default function SessaoList() {
   if (loading)
     return <div className="p-4 text-center">Carregando sessões...</div>;
 
-  if (sessoes.length === 0)
-    return <div className="p-4 text-center">Nenhuma sessão encontrada.</div>;
-
   return (
     <Table.Root>
       <Table.Head>

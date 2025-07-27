@@ -41,7 +41,6 @@ export default function SessaoForm() {
         setSalas(salasData);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-        toast.error("Falha ao carregar filmes e salas");
       } finally {
         toast.success("Dados carregados com sucesso!");
       }
@@ -58,27 +57,32 @@ export default function SessaoForm() {
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const selectedDateTime = new Date(values.data_hora);
+        const dataHoraFormatada = new Date(values.data_hora).toISOString();
 
-        if (isNaN(selectedDateTime.getTime())) {
-          toast.error("Data e hora selecionadas são inválidas.");
-          return;
-        }
-
-        const dataHoraFormatada = selectedDateTime.toISOString();
+        console.log("Dados sendo enviados:", {
+          // 👈 Adicione isso
+          data_hora: dataHoraFormatada,
+          filme_id: Number(values.filme),
+          sala_id: Number(values.sala),
+        });
 
         const sessaoCriada = await createSessao({
           data_hora: dataHoraFormatada,
           filme_id: Number(values.filme),
           sala_id: Number(values.sala),
         });
-        toast.success(
-          `Sessão criada com sucesso! ID: ${sessaoCriada.id_sessao}`
-        );
+
+        console.log("Resposta da API:", sessaoCriada); // 👈 Adicione isso
+
+        // Se chegou aqui, a sessão foi criada!
+        toast.success("Sessão criada com sucesso!");
         resetForm();
       } catch (error) {
-        console.error("Erro ao criar sessão:", error);
-        toast.error("Falha ao criar sessão");
+        console.error("Erro completo:", error); // 👈 Mostra detalhes reais
+        toast.error(
+          "Falha ao criar sessão: " +
+            (error instanceof Error ? error.message : "Erro desconhecido")
+        );
       }
     },
   });
