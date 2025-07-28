@@ -156,6 +156,7 @@ export default function FilmForm({
     } else {
       formik.resetForm();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filmeParaEditar]);
 
   return (
