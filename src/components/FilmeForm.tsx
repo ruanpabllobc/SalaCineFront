@@ -102,13 +102,12 @@ export default function FilmForm({
     onSubmit: async (values, { resetForm }) => {
       try {
         if (isEditMode && filmeParaEditar?.id_filme) {
-          // Para edição - envia como JSON
           const payload = {
             titulo: values.titulo,
             duracao: Number(values.duracao),
             classificacao: Number(values.classificacao),
             diretor: values.diretor,
-            generos: values.genero, // Note o plural aqui para bater com o backend
+            generos: values.genero,
           };
 
           console.log("Enviando para atualização:", payload);
@@ -117,9 +116,8 @@ export default function FilmForm({
             filmeParaEditar.id_filme,
             payload
           );
-          toast.success(`Filme "${filmeAtualizado.titulo}" atualizado!`);
+          toast.success(`Filme "${filmeAtualizado.data}" atualizado!`);
         } else {
-          // Para criação - mantém FormData (para o poster)
           const formData = new FormData();
           formData.append("titulo", values.titulo);
           formData.append("duracao", String(values.duracao));
@@ -149,9 +147,9 @@ export default function FilmForm({
         titulo: filmeParaEditar.titulo,
         duracao: filmeParaEditar.duracao,
         classificacao: filmeParaEditar.classificacao.toString(),
-        genero: filmeParaEditar.genero || [], // Corrigido para plural
+        genero: filmeParaEditar.genero || [],
         diretor: filmeParaEditar.diretor,
-        poster: null, // Mantemos null para o poster, o usuário pode substituir
+        poster: null,
       });
     } else {
       formik.resetForm();
@@ -218,26 +216,6 @@ export default function FilmForm({
             />
           </div>
         </div>
-        {/* Linha 3: Grupo de Botões
-          <div className="flex-1">
-          <FloatingLabelInput
-          id="genero"
-          name="genero"
-          label="Selecionar Gênero"
-          type="select"
-          value={formik.values.genero}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          touched={formik.touched.genero}
-          error={formik.errors.genero}
-          options={[
-            { value: "", label: "Selecionar Gênero" },
-            ...generos.map((genero) => ({ value: genero, label: genero })),
-            ]}
-            />
-            </div>
-            */}
-
         <div className="flex gap-5">
           <div className="flex-1 max-w-[350px]">
             <MultiSelect

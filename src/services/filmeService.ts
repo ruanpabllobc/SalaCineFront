@@ -46,11 +46,16 @@ export async function deleteFilme(id: string): Promise<void> {
   }
 }
 
-export const updateFilme = async (id: number, formData: FormData): Promise<Filme> => {
-  const response = await api.put(`/filmes/${id}`, formData, {
-    headers: {
-      "Content-Type": "application/json", 
-    },
-  });
-  return response.data.filme;
-};
+export async function updateFilme(
+  id: number,
+  data: FormData | {
+    titulo: string;
+    duracao: number;
+    classificacao: number;
+    diretor: string;
+    generos: string[];
+  }
+) {
+  return await api.put(`/filmes/${id}`, data);
+}
+
