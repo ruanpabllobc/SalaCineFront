@@ -5,6 +5,7 @@ import { SessaoOutput } from "@/types/Sessao";
 import { getSessoes, deleteSessao } from "@/services/sessaoService";
 import { Table } from "@/components/Table";
 import SessaoForm from "./SessaoForm";
+import { Trash } from "lucide-react";
 
 export default function SessaoList() {
   const [sessoes, setSessoes] = useState<SessaoOutput[]>([]);
@@ -43,7 +44,7 @@ export default function SessaoList() {
     return <div className="p-4 text-center">Carregando sessões...</div>;
 
   return (
-    <div>
+    <div className="flex flex-col gap-16">
       <SessaoForm onSuccess={fetchSessoes} />
       <Table.Root>
         <Table.Head>
@@ -68,9 +69,9 @@ export default function SessaoList() {
                     if (typeof sessao.id_sessao === "number")
                       handleDelete(sessao.id_sessao);
                   }}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500"
                 >
-                  Excluir
+                  <Trash />
                 </button>,
               ]}
             />

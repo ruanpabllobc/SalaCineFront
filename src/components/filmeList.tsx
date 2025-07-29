@@ -6,6 +6,7 @@ import { getFilmes, deleteFilme, getFilmeById } from "@/services/filmeService";
 import { Table } from "@/components/Table";
 import FilmeForm from "./FilmeForm";
 import { toast } from "react-toastify";
+import { Trash, Pencil } from "lucide-react";
 
 export default function SalaList() {
   const [filmes, setFilmes] = useState<Filme[]>([]);
@@ -66,7 +67,7 @@ export default function SalaList() {
     return <div className="p-4 text-center">Nenhum filme encontrado.</div>;
 
   return (
-    <div>
+    <div className="flex flex-col gap-16">
       <FilmeForm
         filmeParaEditar={filmeParaEditar ?? undefined}
         onSuccess={handleSuccess}
@@ -95,28 +96,24 @@ export default function SalaList() {
                   filme.diretor,
                   filme.classificacao,
                   filme.duracao,
-                  <>
-                    <button
-                      onClick={() =>
-                        filme.id_filme && handleEdit(filme.id_filme)
-                      }
-                      className={`mr-4 ${
-                        filmeParaEditar?.id_filme === filme.id_filme
-                          ? "text-blue-700 font-bold"
-                          : "text-blue-500 hover:text-blue-700"
-                      }`}
-                    >
-                      Editar
-                    </button>
+                  <div key={filme.id_filme} className="flex gap-6">
                     <button
                       onClick={() => {
                         if (filme.id_filme) handleDelete(filme.id_filme);
                       }}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500"
                     >
-                      Excluir
+                      <Trash />
                     </button>
-                  </>,
+                    <button
+                      onClick={() =>
+                        filme.id_filme && handleEdit(filme.id_filme)
+                      }
+                      className="text-[#FF9809]"
+                    >
+                      <Pencil />
+                    </button>
+                  </div>,
                 ]}
               />
             ))}

@@ -1,7 +1,7 @@
 import React from "react";
 
 interface CustomButtonProps {
-  label: string;
+  label?: string;
   icon?: React.ReactNode;
   variant?: "default" | "danger";
   type?: "button" | "submit" | "reset";

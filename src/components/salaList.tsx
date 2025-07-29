@@ -5,6 +5,7 @@ import { Sala } from "@/types/Sala";
 import { getSalas, deleteSala } from "@/services/salaService";
 import { Table } from "@/components/Table";
 import SalaForm from "./SalaForm";
+import { Trash } from "lucide-react";
 
 export default function SalaList() {
   const [salas, setSalas] = useState<Sala[]>([]);
@@ -45,7 +46,7 @@ export default function SalaList() {
     return <div className="p-4 text-center">Carregando salas...</div>;
 
   return (
-    <div>
+    <div className="flex flex-col gap-16">
       <SalaForm onSuccess={fetchSalas} />
       <Table.Root>
         <Table.Head>
@@ -68,9 +69,9 @@ export default function SalaList() {
                     if (typeof sala.id_sala === "number")
                       handleDelete(sala.id_sala);
                   }}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500"
                 >
-                  Excluir
+                  <Trash />
                 </button>,
               ]}
             />

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import FloatingLabelInput from "./FloatingLabelInput";
 import "react-toastify/dist/ReactToastify.css";
 import CustomButton from "./CustomButton";
-import { Plus, Ban } from "lucide-react";
+import { Plus, Ban, Upload } from "lucide-react";
 import FloatingLabelFileInput from "./FloatingLabelFileInput";
 import MultiSelect from "./MultiSelect";
 import { Filme } from "@/types/Filme";
@@ -173,6 +173,27 @@ export default function FilmForm({
         </h3>
       </div>
 
+      <div>
+        <div className="flex-1">
+          <FloatingLabelFileInput
+            id="poster"
+            name="poster"
+            label="Poster do Filme"
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0] ?? null;
+              formik.setFieldValue("poster", file);
+            }}
+            onBlur={formik.handleBlur}
+            touched={formik.touched.poster}
+            error={formik.errors.poster as string}
+            accept="image/jpeg, image/png"
+            fileName={formik.values.poster?.name || ""}
+            success={Boolean(formik.values.poster && !formik.errors.poster)}
+            icon={<Upload className="w-7 h-7 text-[#181818]" />}
+          />
+        </div>
+      </div>
+
       {/* Linha 2: Grupo de Inputs */}
       <div className="flex flex-col gap-8">
         <div>
@@ -252,26 +273,6 @@ export default function FilmForm({
                   label: item.label,
                 })),
               ]}
-            />
-          </div>
-        </div>
-
-        <div>
-          <div className="flex-1">
-            <FloatingLabelFileInput
-              id="poster"
-              name="poster"
-              label="Poster do Filme"
-              onChange={(event) => {
-                const file = event.currentTarget.files?.[0] ?? null;
-                formik.setFieldValue("poster", file);
-              }}
-              onBlur={formik.handleBlur}
-              touched={formik.touched.poster}
-              error={formik.errors.poster as string}
-              accept="image/jpeg, image/png"
-              fileName={formik.values.poster?.name || ""}
-              success={Boolean(formik.values.poster && !formik.errors.poster)}
             />
           </div>
         </div>

@@ -9,7 +9,7 @@ import {
 interface FloatingLabelFileInputProps {
   id: string;
   name: string;
-  label: string;
+  label?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   touched?: boolean;
@@ -18,6 +18,7 @@ interface FloatingLabelFileInputProps {
   accept?: string;
   fileName?: string;
   success?: boolean;
+  icon?: React.ReactNode;
 }
 
 const FloatingLabelFileInput: React.FC<FloatingLabelFileInputProps> = ({
@@ -32,6 +33,7 @@ const FloatingLabelFileInput: React.FC<FloatingLabelFileInputProps> = ({
   accept,
   fileName,
   success,
+  icon,
 }) => {
   // Ajusta a cor do anel com base no estado (erro, sucesso, ou padrão)
   let ringColorClass = "ring-[#181818] focus:ring-[#181818]";
@@ -41,7 +43,7 @@ const FloatingLabelFileInput: React.FC<FloatingLabelFileInputProps> = ({
     ringColorClass = "ring-green-500 focus:ring-green-500";
   }
 
-  const combinedClasses = `${commonClasses} ${ringColorClass} cursor-pointer flex items-center ${
+  const combinedClasses = `${commonClasses} ${ringColorClass} inline-flex flex-col items-center justify-center gap-6 cursor-pointer w-40 h-[100px] ${
     fileName ? "text-[#181818]" : "text-[#B4B4B4]"
   }`;
 
@@ -58,6 +60,7 @@ const FloatingLabelFileInput: React.FC<FloatingLabelFileInputProps> = ({
           accept={accept}
         />
         <label htmlFor={id} className={combinedClasses}>
+          {icon && <span className="mb-1">{icon}</span>}
           {fileName || label}
         </label>
         {(fileName || touched) && (
