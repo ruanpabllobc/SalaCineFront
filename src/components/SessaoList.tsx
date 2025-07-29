@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SessaoOutput } from "@/types/Sessao";
 import { getSessoes, deleteSessao } from "@/services/sessaoService";
 import { Table } from "@/components/Table";
+import SessaoForm from "./SessaoForm";
 
 export default function SessaoList() {
   const [sessoes, setSessoes] = useState<SessaoOutput[]>([]);
@@ -42,37 +43,40 @@ export default function SessaoList() {
     return <div className="p-4 text-center">Carregando sessões...</div>;
 
   return (
-    <Table.Root>
-      <Table.Head>
-        <Table.Row>
-          <Table.HeaderCell>Filme</Table.HeaderCell>
-          <Table.HeaderCell>Sala</Table.HeaderCell>
-          <Table.HeaderCell>Horário</Table.HeaderCell>
-          <Table.HeaderCell>Ação</Table.HeaderCell>
-        </Table.Row>
-      </Table.Head>
-      <Table.Body>
-        {sessoes.map((sessao) => (
-          <Table.Row
-            key={sessao.id_sessao}
-            cellsContent={[
-              sessao.filme.titulo,
-              sessao.sala.numero_sala,
-              new Date(sessao.data_hora).toLocaleString(),
-              <button
-                key="delete"
-                onClick={() => {
-                  if (typeof sessao.id_sessao === "number")
-                    handleDelete(sessao.id_sessao);
-                }}
-                className="text-red-500 hover:text-red-700"
-              >
-                Excluir
-              </button>,
-            ]}
-          />
-        ))}
-      </Table.Body>
-    </Table.Root>
+    <div>
+      <SessaoForm onSuccess={fetchSessoes} />
+      <Table.Root>
+        <Table.Head>
+          <Table.Row>
+            <Table.HeaderCell>Filme</Table.HeaderCell>
+            <Table.HeaderCell>Sala</Table.HeaderCell>
+            <Table.HeaderCell>Horário</Table.HeaderCell>
+            <Table.HeaderCell>Ação</Table.HeaderCell>
+          </Table.Row>
+        </Table.Head>
+        <Table.Body>
+          {sessoes.map((sessao) => (
+            <Table.Row
+              key={sessao.id_sessao}
+              cellsContent={[
+                sessao.filme.titulo,
+                sessao.sala.numero_sala,
+                new Date(sessao.data_hora).toLocaleString(),
+                <button
+                  key="delete"
+                  onClick={() => {
+                    if (typeof sessao.id_sessao === "number")
+                      handleDelete(sessao.id_sessao);
+                  }}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Excluir
+                </button>,
+              ]}
+            />
+          ))}
+        </Table.Body>
+      </Table.Root>
+    </div>
   );
 }

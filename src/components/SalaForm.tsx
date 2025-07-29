@@ -9,6 +9,10 @@ import FloatingLabelInput from "./FloatingLabelInput";
 import CustomButton from "./CustomButton";
 import { Plus, Ban } from "lucide-react";
 
+interface SalaFormProps {
+  onSuccess?: () => void; // Adicione esta linha
+}
+
 const validationSchema = Yup.object().shape({
   numero_sala: Yup.number()
     .integer("O número da sala deve ser um inteiro")
@@ -19,7 +23,7 @@ const validationSchema = Yup.object().shape({
     .required("A localização é obrigatória"),
 });
 
-export default function SalaForm() {
+export default function SalaForm({ onSuccess }: Readonly<SalaFormProps>) {
   const formik = useFormik({
     initialValues: {
       numero_sala: "",
@@ -34,9 +38,10 @@ export default function SalaForm() {
         };
         const salaCriada = await createSala(dataToSend);
         toast.success(
-          `Sala ${salaCriada.numero_sala} cadastrada! ID: ${salaCriada.id_sala}`,
+          `Sala ${salaCriada.numero_sala} cadastrada! ID: ${salaCriada.id_sala}`
         );
         resetForm();
+        onSuccess?.();
       } catch (error) {
         console.error("Erro ao criar sala:", error);
         toast.error("Falha ao cadastrar sala");

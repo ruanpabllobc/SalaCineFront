@@ -14,6 +14,10 @@ import { Sala } from "@/types/Sala";
 import { getFilmes } from "@/services/filmeService";
 import { getSalas } from "@/services/salaService";
 
+interface SessaoFormProps {
+  onSuccess?: () => void; // Adicione esta linha
+}
+
 const validationSchema = Yup.object().shape({
   filme: Yup.number()
     .min(1, "Selecione um filme")
@@ -26,7 +30,7 @@ const validationSchema = Yup.object().shape({
     .min(new Date(), "A data e hora devem ser no futuro"),
 });
 
-export default function SessaoForm() {
+export default function SessaoForm({ onSuccess }: Readonly<SessaoFormProps>) {
   const [filmes, setFilmes] = useState<Filme[]>([]);
   const [salas, setSalas] = useState<Sala[]>([]);
 
@@ -75,6 +79,7 @@ export default function SessaoForm() {
         // Se chegou aqui, a sessão foi criada!
         toast.success("Sessão criada com sucesso!");
         resetForm();
+        onSuccess?.();
       } catch (error) {
         console.error("Erro completo:", error); // 👈 Mostra detalhes reais
         toast.error(
